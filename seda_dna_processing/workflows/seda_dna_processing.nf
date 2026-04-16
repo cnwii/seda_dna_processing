@@ -7,8 +7,9 @@
 include { INPUT_CHECK            } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/input_check'
 
 include { FASTQC                 } from '../modules/nf-core/fastqc/main'
-include { FASTP                  } from '../modules/nf-core/fastp/main'
+include { FASTP_POLYG            } from '../modules/nf-core/fastp/main'
 include { ADAPTERREMOVAL         } from '../modules/nf-core/adapterremoval/main'
+include { FASTP_LOW_COMPLEXITY   } from '../modules/nf-core/fastp/main'
 include { BBMAP_BBDUK            } from '../modules/nf-core/bbmap/bbduk/main'  
 
 /*
@@ -32,7 +33,7 @@ workflow SEDA_DNA_PROCESSING {
     )
 
     
-    FASTP (
+    FASTP_POLYG (
         INPUT_CHECK.out.reads.map { meta, reads ->
         tuple(meta, reads, [])
     },
@@ -45,6 +46,11 @@ workflow SEDA_DNA_PROCESSING {
 
     ADAPTERREMOVAL (
         FASTP.out.reads, adapter_list
+    )
+
+    FASTP_LOW_COMPLEXITY (
+        ADAPTERREMOVAL.out.collapsed,
+    false, false, false
     )
 
 }
