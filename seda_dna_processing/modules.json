@@ -1,0 +1,56 @@
+{
+  "name": "cnwii/seda_dna_processing",
+  "homePage": "https://github.com/cnwii/seda_dna_processing",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "adapterremoval": {
+            "branch": "master",
+            "git_sha": "4d7f4def6d2f4f9a0deb241355ced71cfe1ef75e",
+            "installed_by": ["modules"]
+          },
+          "cat/fastq": {
+            "branch": "master",
+            "git_sha": "5d28ea7cfaebcfae6f74d1067ea766d8ff19dff3",
+            "installed_by": ["modules"]
+          },
+          "fastp": {
+            "branch": "master",
+            "git_sha": "1fb5a73bce8e4ac7079b0a9461b23d11e877ad14",
+            "installed_by": ["modules"]
+          },
+          "fastqc": {
+            "branch": "master",
+            "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+            "installed_by": ["modules"]
+          },
+          "multiqc": {
+            "branch": "master",
+            "git_sha": "af27af1be706e6a2bb8fe454175b0cdf77f47b49",
+            "installed_by": ["modules"]
+          }
+        }
+      },
+      "subworkflows": {
+        "nf-core": {
+          "utils_nextflow_pipeline": {
+            "branch": "master",
+            "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+            "installed_by": ["subworkflows"]
+          },
+          "utils_nfcore_pipeline": {
+            "branch": "master",
+            "git_sha": "65f5e638d901a51534c68fd5c1c19e8112fb4df1",
+            "installed_by": ["subworkflows"]
+          },
+          "utils_nfschema_plugin": {
+            "branch": "master",
+            "git_sha": "4b406a74dc0449c0401ed87d5bfff4252fd277fd",
+            "installed_by": ["subworkflows"]
+          }
+        }
+      }
+    }
+  }
+}
