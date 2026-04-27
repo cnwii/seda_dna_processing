@@ -5,14 +5,17 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { INPUT_CHECK                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/input_check'
-include { FASTQC                                        } from '../modules/nf-core/fastqc/main'
+include { FASTQC as FASTQC_RAW_READS                    } from '../modules/nf-core/fastqc/main'
 include { FASTP as FASTP_POLYG                          } from '../modules/nf-core/fastp/main'
 include { ADAPTERREMOVAL as ADAPTERREMOVAL_PAIRED       } from '../modules/nf-core/adapterremoval/main'
 include { ADAPTERREMOVAL as ADAPTERREMOVAL_SINGLE       } from '../modules/nf-core/adapterremoval/main'
 include { ADNA_TRIM                                     } from '../modules/local/adna_trim.nf'
 include { CAT_FASTQ as CAT_FASTQ_AR                     } from '../modules/nf-core/cat/fastq/main'
 include { FASTP as FASTP_LOW_COMPLEXITY                 } from '../modules/nf-core/fastp/main'
-//include { BBMAP_BBDUK                                   } from '../modules/nf-core/bbmap/bbduk/main' 
+include { FASTQC as FASTQC_PROCESSED_READS              } from '../modules/nf-core/fastqc/main'
+include { UNTAR as UNTAR_METAGENOMICS                   } from '../modules/nf-core/untar/main'
+include { KRAKENUNIQ_PRELOADEDKRAKENUNIQ                } from '../modules/nf-core/krakenuniq/preloadedkrakenuniq/main'
+include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'                 
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,11 +30,12 @@ workflow SEDA_DNA_PROCESSING {
     
     main:
 
+// Pre-processing
     // Check input
     INPUT_CHECK (samplesheet)
 
     // Run basic QC
-    FASTQC (
+    FASTQC_RAW_READS (
         INPUT_CHECK.out.reads
     )
 
@@ -94,7 +98,7 @@ workflow SEDA_DNA_PROCESSING {
             .mix(ADAPTERREMOVAL_SINGLE.out.singles_truncated)
     }
 
-    
+    // Filtering low complexity reads
     FASTP_LOW_COMPLEXITY (
         ch_adapter_trimmed_reads_prepped.map { meta, reads ->
         tuple(meta, reads, [])
@@ -102,6 +106,63 @@ workflow SEDA_DNA_PROCESSING {
         false, false, false
     )
 
+    // QC report for processed reads
+    FASTQC_PROCESSED_READS (
+        FASTP_LOW_COMPLEXITY.out.reads
+    )
+
+    // Metagenomics profiling
+    ch_database = Channel.value(file(params.database_path))
+    .branch{
+        untar: it ==~ /.*.tar.gz/
+        base:true
+    }
+
+    // Untar the database
+    ch_untar_input = ch_database.untar.map{ [[], it] }
+
+    UNTAR_METAGENOMICS ( 
+        ch_untar_input 
+        )
+
+    ch_untar_output = UNTAR_METAGENOMICS.out.untar.map{ it[1] }
+
+    ch_database = ch_database.base.mix(ch_untar_output)
+
+    ch_krakenuniq_input = FASTP_LOW_COMPLEXITY.out.reads
+    .map { meta, reads ->
+        def seqtype = meta.single_end ? 'fastq' : 'fastq'
+        def prefix  = meta.id
+
+        tuple(
+            [meta, reads, [prefix]],
+            seqtype,
+            null                      
+        )
+    }
+    .combine(ch_database)
+    .map { tuple_part, seqtype, _, db ->
+        def (meta, reads, prefixes) = tuple_part
+        tuple(
+            [meta, reads, prefixes],
+            seqtype,
+            db
+        )
+    }
+
+    // Run KrakenUniq
+    KRAKENUNIQ_PRELOADEDKRAKENUNIQ(
+        ch_krakenuniq_input.map{ it[0] },
+        ch_krakenuniq_input.map{ it[1] },
+        ch_krakenuniq_input.map{ it[2] },
+        true,
+        true,
+        true
+    )
+
+    KRAKENTOOLS_KREPORT2KRONA(
+        KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+    )
 }
 
 /*
