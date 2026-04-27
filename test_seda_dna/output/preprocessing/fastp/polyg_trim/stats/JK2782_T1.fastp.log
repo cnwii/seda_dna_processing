@@ -1,0 +1,54 @@
+Detecting adapter sequence for read1...
+>Illumina TruSeq Adapter Read 1
+AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+
+Detecting adapter sequence for read2...
+>Illumina TruSeq Adapter Read 2
+AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+
+Read1 before filtering:
+total reads: 10000
+total bases: 1250000
+Q20 bases: 1193350(95.468%)
+Q30 bases: 1150221(92.0177%)
+Q40 bases: 0(0%)
+
+Read2 before filtering:
+total reads: 10000
+total bases: 1250000
+Q20 bases: 1172770(93.8216%)
+Q30 bases: 1119083(89.5266%)
+Q40 bases: 0(0%)
+
+Read1 after filtering:
+total reads: 9924
+total bases: 710123
+Q20 bases: 693862(97.7101%)
+Q30 bases: 671788(94.6016%)
+Q40 bases: 0(0%)
+
+Read2 after filtering:
+total reads: 9924
+total bases: 709687
+Q20 bases: 695743(98.0352%)
+Q30 bases: 680077(95.8277%)
+Q40 bases: 0(0%)
+
+Filtering result:
+reads passed filter: 19848
+reads failed due to low quality: 100
+reads failed due to too many N: 0
+reads failed due to too short: 52
+reads failed due to adapter dimer: 0
+reads with adapter trimmed: 18125
+bases trimmed due to adapters: 1067731
+
+Duplication rate: 0.91%
+
+Insert size peak (evaluated by paired-end reads): 44
+
+JSON report: JK2782_T1.fastp.json
+HTML report: JK2782_T1.fastp.html
+
+fastp --in1 JK2782_T1_R1.fastq.gz --in2 JK2782_T1_R2.fastq.gz --out1 JK2782_T1_R1.fastp.fastq.gz --out2 JK2782_T1_R2.fastp.fastq.gz --json JK2782_T1.fastp.json --html JK2782_T1.fastp.html --thread 6 --detect_adapter_for_pe --length_required 25 
+fastp v1.1.0, time used: 1 seconds

@@ -1,0 +1,34 @@
+Detecting adapter sequence for read1...
+No adapter detected for read1
+
+Read1 before filtering:
+total reads: 855
+total bases: 128672
+Q20 bases: 127324(98.9524%)
+Q30 bases: 125102(97.2255%)
+Q40 bases: 0(0%)
+
+Read1 after filtering:
+total reads: 855
+total bases: 128672
+Q20 bases: 127324(98.9524%)
+Q30 bases: 125102(97.2255%)
+Q40 bases: 0(0%)
+
+Filtering result:
+reads passed filter: 855
+reads failed due to low quality: 0
+reads failed due to too many N: 0
+reads failed due to too short: 0
+reads failed due to low complexity: 0
+reads failed due to adapter dimer: 0
+reads with adapter trimmed: 0
+bases trimmed due to adapters: 0
+
+Duplication rate (may be overestimated since this is SE data): 1.28655%
+
+JSON report: JK2782_T1_low_complexity.fastp.json
+HTML report: JK2782_T1_low_complexity.fastp.html
+
+fastp --in1 JK2782_T1_low_complexity.fastq.gz --out1 JK2782_T1_low_complexity.fastp.fastq.gz --thread 4 --json JK2782_T1_low_complexity.fastp.json --html JK2782_T1_low_complexity.fastp.html --low_complexity_filter --complexity_threshold 10 
+fastp v1.1.0, time used: 1 seconds

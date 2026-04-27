@@ -1,0 +1,56 @@
+# KrakenUniq v1.0.4 DATE:2026-04-27T02:27:24Z DB:./eager3-mammoth-minimal DB_SIZE:343768 WD:/scratchdata1/users/a1844642/project/test_seda_dna/logs/work/a4/4fc969788e0d391c1a07f7ba6bc6ae
+# CL:/usr/local/bin/krakenuniq --db eager3-mammoth-minimal --threads 4 --report-file JK2782_T1.krakenuniq.report.txt --output JK2782_T1.krakenuniq.classified.txt --unclassified-out JK2782_T1.unclassified.fastq --classified-out JK2782_T1.classified.fastq sequences/JK2782_T1.fastp.fastq.gz
+%	reads	taxReads	kmers	dup	cov	taxID	rank	taxName
+88.26	8713	8713	320657	1.25	NA	0	no rank	unclassified
+11.74	1159	0	7851	3.89	0.2055	1	no rank	root
+11.74	1159	0	7851	3.89	0.2055	131567	no rank	  cellular organisms
+11.74	1159	0	7851	3.89	0.2055	2759	superkingdom	    Eukaryota
+11.74	1159	0	7851	3.89	0.2055	33154	clade	      Opisthokonta
+11.74	1159	0	7851	3.89	0.2055	33208	kingdom	        Metazoa
+11.74	1159	0	7851	3.89	0.2055	6072	clade	          Eumetazoa
+11.74	1159	0	7851	3.89	0.2055	33213	clade	            Bilateria
+11.74	1159	0	7851	3.89	0.2055	33511	clade	              Deuterostomia
+11.74	1159	0	7851	3.89	0.2055	7711	phylum	                Chordata
+11.74	1159	0	7851	3.89	0.2055	89593	subphylum	                  Craniata
+11.74	1159	0	7851	3.89	0.2055	7742	clade	                    Vertebrata
+11.74	1159	0	7851	3.89	0.2055	7776	clade	                      Gnathostomata
+11.74	1159	0	7851	3.89	0.2055	117570	clade	                        Teleostomi
+11.74	1159	0	7851	3.89	0.2055	117571	clade	                          Euteleostomi
+11.74	1159	0	7851	3.89	0.2055	8287	superclass	                            Sarcopterygii
+11.74	1159	0	7851	3.89	0.2055	1338369	clade	                              Dipnotetrapodomorpha
+11.74	1159	0	7851	3.89	0.2055	32523	clade	                                Tetrapoda
+11.74	1159	0	7851	3.89	0.2055	32524	clade	                                  Amniota
+11.73	1158	0	7822	3.9	0.4141	40674	class	                                    Mammalia
+11.73	1158	0	7822	3.9	0.4141	32525	clade	                                      Theria
+11.73	1158	2	7822	3.9	0.4141	9347	clade	                                        Eutheria
+11.69	1154	0	7722	3.93	0.8167	311790	superorder	                                          Afrotheria
+11.69	1154	0	7722	3.93	0.8167	9779	order	                                            Proboscidea
+11.69	1154	0	7722	3.93	0.8167	9780	family	                                              Elephantidae
+11.69	1154	0	7722	3.93	0.8167	37348	genus	                                                Mammuthus
+11.69	1154	1154	7722	3.93	0.8167	37349	species	                                                  Mammuthus primigenius
+0.02026	2	0	73	1	0.007766	1437010	clade	                                          Boreoeutheria
+0.02026	2	0	73	1	0.007766	314146	superorder	                                            Euarchontoglires
+0.02026	2	0	73	1	0.007766	9443	order	                                              Primates
+0.02026	2	0	73	1	0.007766	376913	suborder	                                                Haplorrhini
+0.02026	2	0	73	1	0.007766	314293	infraorder	                                                  Simiiformes
+0.02026	2	0	73	1	0.007766	9526	parvorder	                                                    Catarrhini
+0.02026	2	0	73	1	0.007766	314295	superfamily	                                                      Hominoidea
+0.02026	2	0	73	1	0.007766	9604	family	                                                        Hominidae
+0.02026	2	0	73	1	0.007766	207598	subfamily	                                                          Homininae
+0.02026	2	0	73	1	0.007766	9605	genus	                                                            Homo
+0.02026	2	2	73	1	0.007766	9606	species	                                                              Homo sapiens
+0.01013	1	0	4	1	0.0002074	8457	clade	                                    Sauropsida
+0.01013	1	0	4	1	0.0002074	32561	clade	                                      Sauria
+0.01013	1	0	4	1	0.0002074	8504	class	                                        Lepidosauria
+0.01013	1	0	4	1	0.0002074	8509	order	                                          Squamata
+0.01013	1	0	4	1	0.0002074	1329961	clade	                                            Bifurcata
+0.01013	1	0	4	1	0.0002074	1329950	clade	                                              Unidentata
+0.01013	1	0	4	1	0.0002074	1329912	clade	                                                Episquamata
+0.01013	1	0	4	1	0.0002074	1329911	clade	                                                  Toxicofera
+0.01013	1	0	4	1	0.0002074	8570	infraorder	                                                    Serpentes
+0.01013	1	0	4	1	0.0002074	34979	superfamily	                                                      Henophidia
+0.01013	1	0	4	1	0.0002074	8572	family	                                                        Boidae
+0.01013	1	0	4	1	0.0002074	196244	subfamily	                                                          Boinae
+0.01013	1	0	4	1	0.0002074	8573	genus	                                                            Boa
+0.01013	1	0	4	1	0.0002074	8574	species	                                                              Boa constrictor
+0.01013	1	1	4	1	0.0002074	1000000001		assembly	                                                                

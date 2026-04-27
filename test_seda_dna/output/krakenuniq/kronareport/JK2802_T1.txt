@@ -1,0 +1,11 @@
+0	k__Eukaryota
+0	k__Eukaryota	p__Chordata
+0	k__Eukaryota	p__Chordata	c__Mammalia
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Proboscidea
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Proboscidea	f__Elephantidae
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Proboscidea	f__Elephantidae	g__Mammuthus
+1466	k__Eukaryota	p__Chordata	c__Mammalia	o__Proboscidea	f__Elephantidae	g__Mammuthus	s__Mammuthus_primigenius
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Primates
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Primates	f__Hominidae
+0	k__Eukaryota	p__Chordata	c__Mammalia	o__Primates	f__Hominidae	g__Homo
+1	k__Eukaryota	p__Chordata	c__Mammalia	o__Primates	f__Hominidae	g__Homo	s__Homo_sapiens

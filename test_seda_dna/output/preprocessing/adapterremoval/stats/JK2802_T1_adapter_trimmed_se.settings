@@ -1,0 +1,171 @@
+AdapterRemoval ver. 2.3.4
+Trimming of single-end reads
+
+
+[Adapter sequences]
+Adapter1[1]: AGATCGGAAGAGCACACGTCTGAACTCCAGTCACNNNNNNATCTCGTATGCCGTCTTCTGCTTG
+Adapter2[1]: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+
+[Adapter trimming]
+RNG seed: NA
+Alignment shift value: 2
+Global mismatch threshold: 0.333333
+Quality format (input): Phred+33
+Quality score max (input): 41
+Quality format (output): Phred+33
+Quality score max (output): 41
+Mate-number separator (input): '/'
+Trimming 5p: 0
+Trimming 3p: 0
+Trimming Ns: No
+Trimming Phred scores <= 20: Yes
+Trimming using sliding windows: No
+Minimum genomic length: 25
+Maximum genomic length: 4294967295
+Collapse overlapping reads: No
+Deterministic collapse: No
+Conservative collapse: No
+Minimum overlap (in case of collapse): 11
+Minimum adapter overlap: 1
+
+
+[Trimming statistics]
+Total number of reads: 9966
+Number of unaligned reads: 7868
+Number of well aligned reads: 2098
+Number of discarded mate 1 reads: 30
+Number of singleton mate 1 reads: 9936
+Number of reads with adapters[1]: 2098
+Number of retained reads: 9936
+Number of retained nucleotides: 672354
+Average length of retained reads: 67.6685
+
+
+[Length distribution]
+Length	Mate1	Discarded	All
+0	0	0	0
+1	0	0	0
+2	0	0	0
+3	0	0	0
+4	0	0	0
+5	0	0	0
+6	0	0	0
+7	0	0	0
+8	0	0	0
+9	0	0	0
+10	0	0	0
+11	0	0	0
+12	0	1	1
+13	0	0	0
+14	0	0	0
+15	0	0	0
+16	0	0	0
+17	0	0	0
+18	0	0	0
+19	0	1	1
+20	0	1	1
+21	0	0	0
+22	0	3	3
+23	0	7	7
+24	0	17	17
+25	22	0	22
+26	17	0	17
+27	27	0	27
+28	31	0	31
+29	52	0	52
+30	62	0	62
+31	73	0	73
+32	91	0	91
+33	108	0	108
+34	108	0	108
+35	117	0	117
+36	147	0	147
+37	126	0	126
+38	132	0	132
+39	154	0	154
+40	143	0	143
+41	191	0	191
+42	168	0	168
+43	160	0	160
+44	185	0	185
+45	184	0	184
+46	186	0	186
+47	166	0	166
+48	179	0	179
+49	176	0	176
+50	200	0	200
+51	162	0	162
+52	170	0	170
+53	187	0	187
+54	163	0	163
+55	159	0	159
+56	205	0	205
+57	179	0	179
+58	154	0	154
+59	150	0	150
+60	147	0	147
+61	163	0	163
+62	129	0	129
+63	152	0	152
+64	144	0	144
+65	133	0	133
+66	131	0	131
+67	128	0	128
+68	124	0	124
+69	105	0	105
+70	103	0	103
+71	110	0	110
+72	99	0	99
+73	110	0	110
+74	103	0	103
+75	109	0	109
+76	97	0	97
+77	106	0	106
+78	100	0	100
+79	86	0	86
+80	77	0	77
+81	78	0	78
+82	69	0	69
+83	70	0	70
+84	75	0	75
+85	71	0	71
+86	74	0	74
+87	79	0	79
+88	74	0	74
+89	69	0	69
+90	47	0	47
+91	68	0	68
+92	55	0	55
+93	54	0	54
+94	65	0	65
+95	54	0	54
+96	48	0	48
+97	35	0	35
+98	42	0	42
+99	37	0	37
+100	43	0	43
+101	44	0	44
+102	41	0	41
+103	37	0	37
+104	41	0	41
+105	43	0	43
+106	24	0	24
+107	39	0	39
+108	43	0	43
+109	30	0	30
+110	35	0	35
+111	35	0	35
+112	30	0	30
+113	36	0	36
+114	22	0	22
+115	31	0	31
+116	29	0	29
+117	45	0	45
+118	39	0	39
+119	25	0	25
+120	50	0	50
+121	48	0	48
+122	169	0	169
+123	271	0	271
+124	332	0	332

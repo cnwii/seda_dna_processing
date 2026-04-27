@@ -1,0 +1,41 @@
+# KrakenUniq v1.0.4 DATE:2026-04-27T02:27:24Z DB:./eager3-mammoth-minimal DB_SIZE:343768 WD:/scratchdata1/users/a1844642/project/test_seda_dna/logs/work/44/7c541daaeb4abaadf376386d5b06bd
+# CL:/usr/local/bin/krakenuniq --db eager3-mammoth-minimal --threads 4 --report-file JK2802_T1.krakenuniq.report.txt --output JK2802_T1.krakenuniq.classified.txt --unclassified-out JK2802_T1.unclassified.fastq --classified-out JK2802_T1.classified.fastq sequences/JK2802_T1.fastp.fastq.gz
+%	reads	taxReads	kmers	dup	cov	taxID	rank	taxName
+85.24	8469	8469	279434	1.23	NA	0	no rank	unclassified
+14.76	1467	0	7340	4.04	0.1921	1	no rank	root
+14.76	1467	0	7340	4.04	0.1921	131567	no rank	  cellular organisms
+14.76	1467	0	7340	4.04	0.1921	2759	superkingdom	    Eukaryota
+14.76	1467	0	7340	4.04	0.1921	33154	clade	      Opisthokonta
+14.76	1467	0	7340	4.04	0.1921	33208	kingdom	        Metazoa
+14.76	1467	0	7340	4.04	0.1921	6072	clade	          Eumetazoa
+14.76	1467	0	7340	4.04	0.1921	33213	clade	            Bilateria
+14.76	1467	0	7340	4.04	0.1921	33511	clade	              Deuterostomia
+14.76	1467	0	7340	4.04	0.1921	7711	phylum	                Chordata
+14.76	1467	0	7340	4.04	0.1921	89593	subphylum	                  Craniata
+14.76	1467	0	7340	4.04	0.1921	7742	clade	                    Vertebrata
+14.76	1467	0	7340	4.04	0.1921	7776	clade	                      Gnathostomata
+14.76	1467	0	7340	4.04	0.1921	117570	clade	                        Teleostomi
+14.76	1467	0	7340	4.04	0.1921	117571	clade	                          Euteleostomi
+14.76	1467	0	7340	4.04	0.1921	8287	superclass	                            Sarcopterygii
+14.76	1467	0	7340	4.04	0.1921	1338369	clade	                              Dipnotetrapodomorpha
+14.76	1467	0	7340	4.04	0.1921	32523	clade	                                Tetrapoda
+14.76	1467	0	7340	4.04	0.1921	32524	clade	                                  Amniota
+14.76	1467	0	7328	4.04	0.388	40674	class	                                    Mammalia
+14.76	1467	0	7328	4.04	0.388	32525	clade	                                      Theria
+14.76	1467	0	7328	4.04	0.388	9347	clade	                                        Eutheria
+14.75	1466	0	7296	4.05	0.7717	311790	superorder	                                          Afrotheria
+14.75	1466	0	7296	4.05	0.7717	9779	order	                                            Proboscidea
+14.75	1466	0	7296	4.05	0.7717	9780	family	                                              Elephantidae
+14.75	1466	0	7296	4.05	0.7717	37348	genus	                                                Mammuthus
+14.75	1466	1466	7296	4.05	0.7717	37349	species	                                                  Mammuthus primigenius
+0.01006	1	0	4	1	0.0004255	1437010	clade	                                          Boreoeutheria
+0.01006	1	0	4	1	0.0004255	314146	superorder	                                            Euarchontoglires
+0.01006	1	0	4	1	0.0004255	9443	order	                                              Primates
+0.01006	1	0	4	1	0.0004255	376913	suborder	                                                Haplorrhini
+0.01006	1	0	4	1	0.0004255	314293	infraorder	                                                  Simiiformes
+0.01006	1	0	4	1	0.0004255	9526	parvorder	                                                    Catarrhini
+0.01006	1	0	4	1	0.0004255	314295	superfamily	                                                      Hominoidea
+0.01006	1	0	4	1	0.0004255	9604	family	                                                        Hominidae
+0.01006	1	0	4	1	0.0004255	207598	subfamily	                                                          Homininae
+0.01006	1	0	4	1	0.0004255	9605	genus	                                                            Homo
+0.01006	1	1	4	1	0.0004255	9606	species	                                                              Homo sapiens
