@@ -13,9 +13,10 @@ include { ADNA_TRIM                                     } from '../modules/local
 include { CAT_FASTQ as CAT_FASTQ_AR                     } from '../modules/nf-core/cat/fastq/main'
 include { FASTP as FASTP_LOW_COMPLEXITY                 } from '../modules/nf-core/fastp/main'
 include { FASTQC as FASTQC_PROCESSED_READS              } from '../modules/nf-core/fastqc/main'
-include { UNTAR as UNTAR_METAGENOMICS                   } from '../modules/nf-core/untar/main'
 include { KRAKENUNIQ_PRELOADEDKRAKENUNIQ                } from '../modules/nf-core/krakenuniq/preloadedkrakenuniq/main'
-include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'                 
+include { KRAKEN_FILTERING                              } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+//include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'  
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,22 +113,8 @@ workflow SEDA_DNA_PROCESSING {
     )
 
     // Metagenomics profiling
-    ch_database = Channel.value(file(params.database_path))
-    .branch{
-        untar: it ==~ /.*.tar.gz/
-        base:true
-    }
 
-    // Untar the database
-    ch_untar_input = ch_database.untar.map{ [[], it] }
-
-    UNTAR_METAGENOMICS ( 
-        ch_untar_input 
-        )
-
-    ch_untar_output = UNTAR_METAGENOMICS.out.untar.map{ it[1] }
-
-    ch_database = ch_database.base.mix(ch_untar_output)
+    ch_database = Channel.fromPath(params.database_path, type: 'dir')
 
     ch_krakenuniq_input = FASTP_LOW_COMPLEXITY.out.reads
     .map { meta, reads ->
@@ -160,13 +147,56 @@ workflow SEDA_DNA_PROCESSING {
         true
     )
 
-    KRAKENTOOLS_KREPORT2KRONA(
-        KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+    // KrakenUniq filtering
+    report_ch = KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+
+    // define parameter combinations
+    param_combos = Channel.of(
+        [uniq_kmer: 1000, tax_reads: 100],
+        [uniq_kmer: 500,  tax_reads: 50]
     )
+
+    // attach params to each upstream output
+    report_ch
+        .combine(param_combos)
+        .map { meta, report, param_set ->
+            tuple(meta, report, param_set)
+            }
+        .set { input_ch }
+
+
+    KRAKEN_FILTERING(input_ch)
+    
+    KRAKEN_PLOT(
+        KRAKEN_FILTERING.out.formatted_report
+    )
+
+    //KRAKENTOOLS_KREPORT2KRONA(
+      //  KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+    //)
 }
+
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
+    GRAVEYARD
+
+    include { UNTAR as UNTAR_METAGENOMICS                   } from '../modules/nf-core/untar/main'
+
+    ch_database = Channel.value(file(params.database_path))
+    .branch{
+        untar: it ==~ /.*.tar.gz/
+        base:true
+    }
+
+    // Untar the database
+    ch_untar_input = ch_database.untar.map{ [[], it] }
+
+    UNTAR_METAGENOMICS ( 
+        ch_untar_input 
+        )
+
+    ch_untar_output = UNTAR_METAGENOMICS.out.untar.map{ it[1] }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
