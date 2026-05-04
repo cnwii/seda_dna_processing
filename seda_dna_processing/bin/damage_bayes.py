@@ -9,10 +9,11 @@ import pymc as pm
 import arviz as az
 
 
-input_dir = "/hpcfs/users/a1226686/PROJECTS/Bushfire/3_SEQUENCES/deduplicated/damabayes"
+input_dir = sys.argv[1]
+output_dir = sys.argv[2]
 
-output_pdf = os.path.join(input_dir, "damagebayes_with_smiley_plots.pdf")
-output_csv = os.path.join(input_dir, "global-damage-results.csv")
+output_pdf = os.path.join(output_dir, "damagebayes_with_smiley_plots.pdf")
+output_csv = os.path.join(output_dir, "global-damage-results.csv")
 
 
 def run_damage_model(positions, success_counts, fail_counts):
