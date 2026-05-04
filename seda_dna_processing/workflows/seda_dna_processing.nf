@@ -13,10 +13,11 @@ include { ADNA_TRIM                                     } from '../modules/local
 include { CAT_FASTQ as CAT_FASTQ_AR                     } from '../modules/nf-core/cat/fastq/main'
 include { FASTP as FASTP_LOW_COMPLEXITY                 } from '../modules/nf-core/fastp/main'
 include { FASTQC as FASTQC_PROCESSED_READS              } from '../modules/nf-core/fastqc/main'
+include { DAMAGE_BAYES                                  } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/damage_bayes'
 include { KRAKENUNIQ_PRELOADEDKRAKENUNIQ                } from '../modules/nf-core/krakenuniq/preloadedkrakenuniq/main'
 include { KRAKEN_FILTERING                              } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
-include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
-//include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'  
+//include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'  
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +32,7 @@ workflow SEDA_DNA_PROCESSING {
     
     main:
 
-// Pre-processing
+// PRE-PROCESSING
     // Check input
     INPUT_CHECK (samplesheet)
 
@@ -112,8 +113,13 @@ workflow SEDA_DNA_PROCESSING {
         FASTP_LOW_COMPLEXITY.out.reads
     )
 
-    // Metagenomics profiling
+// ESTIMATING DAMAGE (DAMAGE BAYES)
+    DAMAGE_BAYES (
+        FASTP_LOW_COMPLEXITY.out.reads
+    )
 
+
+// METAGENOMICS PROFILING
     ch_database = Channel.fromPath(params.database_path, type: 'dir')
 
     ch_krakenuniq_input = FASTP_LOW_COMPLEXITY.out.reads
@@ -150,7 +156,7 @@ workflow SEDA_DNA_PROCESSING {
     // KrakenUniq filtering
     report_ch = KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
 
-    // define parameter combinations
+    // Set multiple thresholds
     param_combos = Channel.of(
         [uniq_kmer: 1000, tax_reads: 100],
         [uniq_kmer: 500,  tax_reads: 50]
@@ -167,13 +173,13 @@ workflow SEDA_DNA_PROCESSING {
 
     KRAKEN_FILTERING(input_ch)
     
-    KRAKEN_PLOT(
-        KRAKEN_FILTERING.out.formatted_report
-    )
-
-    //KRAKENTOOLS_KREPORT2KRONA(
-      //  KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+    //KRAKEN_PLOT(
+    //    KRAKEN_FILTERING.out.formatted_report
     //)
+
+    KRAKENTOOLS_KREPORT2KRONA(
+        KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+    )
 }
 
 
