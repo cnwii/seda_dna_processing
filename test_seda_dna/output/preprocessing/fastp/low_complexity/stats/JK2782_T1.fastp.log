@@ -4,16 +4,16 @@ No adapter detected for read1
 Read1 before filtering:
 total reads: 9873
 total bases: 728044
-Q20 bases: 726599(99.8015%)
-Q30 bases: 724456(99.5072%)
-Q40 bases: 677193(93.0154%)
+Q20 bases: 726578(99.7986%)
+Q30 bases: 724393(99.4985%)
+Q40 bases: 676246(92.8853%)
 
 Read1 after filtering:
-total reads: 9809
-total bases: 724482
-Q20 bases: 723045(99.8017%)
-Q30 bases: 720913(99.5074%)
-Q40 bases: 673695(92.9899%)
+total reads: 9657
+total bases: 713208
+Q20 bases: 711760(99.797%)
+Q30 bases: 709605(99.4948%)
+Q40 bases: 662098(92.8338%)
 
 Filtering result:
 reads passed filter: 9809
@@ -30,5 +30,5 @@ Duplication rate (may be overestimated since this is SE data): 1.54968%
 JSON report: JK2782_T1.fastp.json
 HTML report: JK2782_T1.fastp.html
 
-fastp --in1 JK2782_T1.fastq.gz --out1 JK2782_T1.fastp.fastq.gz --thread 6 --json JK2782_T1.fastp.json --html JK2782_T1.fastp.html --low_complexity_filter --complexity_threshold 50 
-fastp v1.1.0, time used: 1 seconds
+fastp --in1 JK2782_T1.fastq.gz --out1 JK2782_T1.fastp.fastq.gz --thread 6 --json JK2782_T1.fastp.json --html JK2782_T1.fastp.html --dedup --low_complexity_filter --complexity_threshold 50 --length_required 25 
+fastp v1.1.0, time used: 2 seconds
