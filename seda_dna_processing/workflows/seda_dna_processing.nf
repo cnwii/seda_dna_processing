@@ -16,9 +16,10 @@ include { FASTQC as FASTQC_PROCESSED_READS              } from '../modules/nf-co
 include { DAMAGE_BAYES                                  } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/damage_bayes'
 include { KRAKENUNIQ_PRELOADEDKRAKENUNIQ                } from '../modules/nf-core/krakenuniq/preloadedkrakenuniq/main'
 include { KRAKEN_FILTERING                              } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
-//include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
-include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'  
-
+include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'
+include { MULTIQC as MULTIQC_RAW                        } from '../modules/nf-core/multiqc/main'
+include { MULTIQC as MULTIQC_PROCESSED                  } from '../modules/nf-core/multiqc/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -173,13 +174,52 @@ workflow SEDA_DNA_PROCESSING {
 
     KRAKEN_FILTERING(input_ch)
     
-    //KRAKEN_PLOT(
-    //    KRAKEN_FILTERING.out.formatted_report
-    //)
+    KRAKEN_PLOT(
+        KRAKEN_FILTERING.out.formatted_report
+    )
 
     KRAKENTOOLS_KREPORT2KRONA(
-        KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
+        KRAKEN_FILTERING.out.formatted_report
     )
+
+
+    ch_multiqc_raw = Channel.empty()
+    ch_multiqc_processed = Channel.empty()
+    ch_multiqc_kraken = Channel.empty()
+    
+
+    ch_multiqc_raw = ch_multiqc_raw.mix(FASTQC_RAW_READS.out.zip.collect { it[1] }.ifEmpty([]))
+    ch_multiqc_processed = ch_multiqc_processed.mix(FASTQC_PROCESSED_READS.out.zip.collect { it[1] }.ifEmpty([]))
+
+
+    ch_multiqc_config        = channel.fromPath(
+       "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config = params.multiqc_config ?
+        channel.fromPath(params.multiqc_config, checkIfExists: true) :
+        channel.empty()
+    ch_multiqc_logo          = params.multiqc_logo ?
+        channel.fromPath(params.multiqc_logo, checkIfExists: true) :
+        channel.empty()
+
+
+    MULTIQC_RAW(
+        ch_multiqc_raw.collect(),
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
+
+    MULTIQC_PROCESSED(
+        ch_multiqc_processed.collect(),
+        ch_multiqc_config.toList(),
+        ch_multiqc_custom_config.toList(),
+        ch_multiqc_logo.toList(),
+        [],
+        []
+    )
+
 }
 
 
