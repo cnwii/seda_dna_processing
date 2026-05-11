@@ -3,32 +3,32 @@ No adapter detected for read1
 
 Read1 before filtering:
 total reads: 9873
-total bases: 727673
-Q20 bases: 726487(99.837%)
-Q30 bases: 724350(99.5433%)
-Q40 bases: 675476(92.8269%)
+total bases: 728044
+Q20 bases: 726599(99.8015%)
+Q30 bases: 724456(99.5072%)
+Q40 bases: 677193(93.0154%)
 
 Read1 after filtering:
-total reads: 9872
-total bases: 727636
-Q20 bases: 726451(99.8371%)
-Q30 bases: 724316(99.5437%)
-Q40 bases: 675449(92.8279%)
+total reads: 9809
+total bases: 724482
+Q20 bases: 723045(99.8017%)
+Q30 bases: 720913(99.5074%)
+Q40 bases: 673695(92.9899%)
 
 Filtering result:
-reads passed filter: 9872
+reads passed filter: 9809
 reads failed due to low quality: 0
 reads failed due to too many N: 0
 reads failed due to too short: 0
-reads failed due to low complexity: 1
+reads failed due to low complexity: 64
 reads failed due to adapter dimer: 0
 reads with adapter trimmed: 0
 bases trimmed due to adapters: 0
 
-Duplication rate (may be overestimated since this is SE data): 1.49904%
+Duplication rate (may be overestimated since this is SE data): 1.54968%
 
 JSON report: JK2782_T1.fastp.json
 HTML report: JK2782_T1.fastp.html
 
-fastp --in1 JK2782_T1.fastq.gz --out1 JK2782_T1.fastp.fastq.gz --thread 4 --json JK2782_T1.fastp.json --html JK2782_T1.fastp.html --low_complexity_filter --complexity_threshold 10 
-fastp v1.1.0, time used: 0 seconds
+fastp --in1 JK2782_T1.fastq.gz --out1 JK2782_T1.fastp.fastq.gz --thread 6 --json JK2782_T1.fastp.json --html JK2782_T1.fastp.html --low_complexity_filter --complexity_threshold 50 
+fastp v1.1.0, time used: 1 seconds

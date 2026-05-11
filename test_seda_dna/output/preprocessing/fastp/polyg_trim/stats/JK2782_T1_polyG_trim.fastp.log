@@ -22,16 +22,16 @@ Q40 bases: 0(0%)
 
 Read1 after filtering:
 total reads: 9924
-total bases: 709150
-Q20 bases: 693244(97.757%)
-Q30 bases: 671296(94.6621%)
+total bases: 710123
+Q20 bases: 693862(97.7101%)
+Q30 bases: 671788(94.6016%)
 Q40 bases: 0(0%)
 
 Read2 after filtering:
 total reads: 9924
-total bases: 708713
-Q20 bases: 695051(98.0723%)
-Q30 bases: 679504(95.8786%)
+total bases: 709687
+Q20 bases: 695743(98.0352%)
+Q30 bases: 680077(95.8277%)
 Q40 bases: 0(0%)
 
 Filtering result:
@@ -40,15 +40,15 @@ reads failed due to low quality: 100
 reads failed due to too many N: 0
 reads failed due to too short: 52
 reads failed due to adapter dimer: 0
-reads with adapter trimmed: 18064
-bases trimmed due to adapters: 1048849
+reads with adapter trimmed: 18125
+bases trimmed due to adapters: 1067731
 
 Duplication rate: 0.91%
 
-Insert size peak (evaluated by paired-end reads): 38
+Insert size peak (evaluated by paired-end reads): 44
 
 JSON report: JK2782_T1_polyG_trim.fastp.json
 HTML report: JK2782_T1_polyG_trim.fastp.html
 
-fastp --in1 JK2782_T1_polyG_trim_R1.fastq.gz --in2 JK2782_T1_polyG_trim_R2.fastq.gz --out1 JK2782_T1_polyG_trim_R1.fastp.fastq.gz --out2 JK2782_T1_polyG_trim_R2.fastp.fastq.gz --json JK2782_T1_polyG_trim.fastp.json --html JK2782_T1_polyG_trim.fastp.html --thread 4 --detect_adapter_for_pe --trim_poly_g --poly_g_min_len 0 --length_required 25 
-fastp v1.1.0, time used: 0 seconds
+fastp --in1 JK2782_T1_polyG_trim_R1.fastq.gz --in2 JK2782_T1_polyG_trim_R2.fastq.gz --out1 JK2782_T1_polyG_trim_R1.fastp.fastq.gz --out2 JK2782_T1_polyG_trim_R2.fastp.fastq.gz --json JK2782_T1_polyG_trim.fastp.json --html JK2782_T1_polyG_trim.fastp.html --thread 6 --detect_adapter_for_pe --trim_poly_g --poly_g_min_len 10 --length_required 25 
+fastp v1.1.0, time used: 1 seconds
