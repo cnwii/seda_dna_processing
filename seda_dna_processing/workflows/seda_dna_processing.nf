@@ -16,10 +16,12 @@ include { FASTQC as FASTQC_PROCESSED_READS              } from '../modules/nf-co
 include { DAMAGE_BAYES                                  } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/damage_bayes'
 include { KRAKENUNIQ_PRELOADEDKRAKENUNIQ                } from '../modules/nf-core/krakenuniq/preloadedkrakenuniq/main'
 include { KRAKEN_FILTERING                              } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
-include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+//include { KRAKEN_ABUNDANCES                             } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
+//include { KRAKEN_PLOT                                   } from '../subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/krakenuniq_filtering'
 include { KRAKENTOOLS_KREPORT2KRONA                     } from '../modules/nf-core/krakentools/kreport2krona/main'
 include { MULTIQC as MULTIQC_RAW                        } from '../modules/nf-core/multiqc/main'
 include { MULTIQC as MULTIQC_PROCESSED                  } from '../modules/nf-core/multiqc/main'
+include { QUARTONOTEBOOK                                } from '../modules/nf-core/quartonotebook/main'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -114,6 +116,43 @@ workflow SEDA_DNA_PROCESSING {
         FASTP_LOW_COMPLEXITY.out.reads
     )
 
+    //MULTIQC runs     
+    ch_raw_reads = Channel.empty()
+    ch_processed_reads = Channel.empty()
+
+    ch_multiqc_config        = channel.fromPath(
+        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+
+    ch_raw_reads = FASTQC_RAW_READS.out.zip
+    .map { meta, file -> file }
+    .collect()
+
+    ch_processed_reads = FASTQC_PROCESSED_READS.out.zip
+    .map { meta, file -> file }
+    .collect()
+
+    ch_multiqc_meta = FASTQC_PROCESSED_READS.out.zip
+    .map { meta, file -> meta }
+
+
+    MULTIQC_RAW(
+        ch_multiqc_meta,
+        ch_raw_reads,
+        ch_multiqc_config,
+        [],
+        [],
+        []
+    )
+
+    MULTIQC_PROCESSED(
+        ch_multiqc_meta,
+        ch_processed_reads,
+        ch_multiqc_config,
+        [],
+        [],
+        []
+    )
+
 // ESTIMATING DAMAGE (DAMAGE BAYES)
     DAMAGE_BAYES (
         FASTP_LOW_COMPLEXITY.out.reads
@@ -156,11 +195,10 @@ workflow SEDA_DNA_PROCESSING {
 
     // KrakenUniq filtering
     report_ch = KRAKENUNIQ_PRELOADEDKRAKENUNIQ.out.report
-
-    // Set multiple thresholds
+// Set multiple thresholds
+    //[uniq_kmer: 500,  tax_reads: 50]
     param_combos = Channel.of(
-        [uniq_kmer: 1000, tax_reads: 100],
-        [uniq_kmer: 500,  tax_reads: 50]
+        [uniq_kmer: 1000, tax_reads: 100]
     )
 
     // attach params to each upstream output
@@ -174,75 +212,86 @@ workflow SEDA_DNA_PROCESSING {
 
     KRAKEN_FILTERING(input_ch)
     
-    KRAKEN_PLOT(
-        KRAKEN_FILTERING.out.formatted_report
-    )
+    ch_tax_file = Channel.fromPath(params.tax_file)
+    ch_metadata = Channel.fromPath(params.metadata)
 
-    KRAKENTOOLS_KREPORT2KRONA(
-        KRAKEN_FILTERING.out.formatted_report
-    )
+    ch_id = KRAKEN_FILTERING.out.formatted
+    .map { meta, param_set, file ->
+        meta
+    }
+    ch_reports = KRAKEN_FILTERING.out.formatted
+        .groupTuple(by:1)
 
-
-    ch_multiqc_raw = Channel.empty()
-    ch_multiqc_processed = Channel.empty()
-    ch_multiqc_kraken = Channel.empty()
     
+    KRAKENTOOLS_KREPORT2KRONA(
+        KRAKEN_FILTERING.out.formatted  
+        )
 
-    ch_multiqc_raw = ch_multiqc_raw.mix(FASTQC_RAW_READS.out.zip.collect { it[1] }.ifEmpty([]))
-    ch_multiqc_processed = ch_multiqc_processed.mix(FASTQC_PROCESSED_READS.out.zip.collect { it[1] }.ifEmpty([]))
+    // Create an empty .qmd notebook beforehand for input
+    
+    ch_quartonotebook = Channel.fromPath(params.quartonotebook)
 
+    ch_quarto_input = KRAKEN_FILTERING.out.formatted
+    .combine(ch_quartonotebook)
+    .map { meta, param_set, file, notebook ->
+        tuple(meta, notebook)
+    }
 
-    ch_multiqc_config        = channel.fromPath(
-       "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        channel.empty()
+    ch_params_block = [
+        dna_concentration: "number",
+        library_fragments: "number",
+        concentration: "value",
+        analysis: "method"
+    ]
 
+    ch_input_pdf = 
+        DAMAGE_BAYES.out.plot_damage
+            .map { meta, plots ->
+                plots
+            }
+            .collect()
 
-    MULTIQC_RAW(
-        ch_multiqc_raw.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
+    QUARTONOTEBOOK(
+        ch_quarto_input,
+        ch_params_block,
+        ch_input_pdf,
         []
-    )
-
-    MULTIQC_PROCESSED(
-        ch_multiqc_processed.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
-    )
-
+        )
+        
 }
-
-
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     GRAVEYARD
 
-    include { UNTAR as UNTAR_METAGENOMICS                   } from '../modules/nf-core/untar/main'
+    KRAKEN_ABUNDANCES(
+        ch_id,
+        ch_reports
+    )
 
-    ch_database = Channel.value(file(params.database_path))
-    .branch{
-        untar: it ==~ /.*.tar.gz/
-        base:true
+    KRAKEN_PLOT(
+        KRAKEN_ABUNDANCES.out.abundance,
+        ch_tax_file,
+        ch_metadata
+    )
+
+    ch_kraken_meta = KRAKEN_PLOT.out.plots.map { meta, param_set, taxonomy, plots ->
+    tuple(meta, plots)
     }
 
-    // Untar the database
-    ch_untar_input = ch_database.untar.map{ [[], it] }
+    ch_quarto_input = ch_kraken_meta
+    .combine(ch_quartonotebook)
+    .map { meta_plots, notebook ->
+        def (meta, plots) = meta_plots
+        tuple(meta, notebook)
+    } // Give meta to notebook
 
-    UNTAR_METAGENOMICS ( 
-        ch_untar_input 
-        )
+    KRAKEN_PLOT.out.plots
+    .map { meta, param_set, taxonomy, plots ->
+        tuple(taxonomy, plots)
+    }
+    .mix(
 
-    ch_untar_output = UNTAR_METAGENOMICS.out.untar.map{ it[1] }
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
