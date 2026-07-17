@@ -3,17 +3,14 @@ process KRAKEN_FILTERING {
     tag "${meta.id}_k${param_set.uniq_kmer}_r${param_set.tax_reads}"
     label 'process_single'
 
-    conda """
-    conda-forge::python=3.8.3
-    conda-forge::pandas
-    """
+    conda "conda-forge::python=3.11 conda-forge::pandas conda-forge::numpy"
     container "/hpcfs/groups/acad_users/containers/ngspy_0.3.sif"
 
     input:
     tuple val(meta), path(report), val(param_set)
 
     output:
-    tuple val(meta), val(param_set), path("*.txt"), emit: formatted_report
+    tuple val(meta), val(param_set), path("formatted/*formatted.report.txt.filtered"), emit: formatted
 
     script:
     def uniq_kmer = param_set.uniq_kmer
@@ -25,9 +22,14 @@ process KRAKEN_FILTERING {
     """
     set -euo pipefail
 
-    new_report=\$(basename ${report} | sed 's/.report/.k${param_set.uniq_kmer}_r${param_set.tax_reads}.formatted.report/')
+    new_report=\$(basename "${report}" | sed "s/\\.report/.k${param_set.uniq_kmer}_r${param_set.tax_reads}.formatted.report/")
 
-    sed -e "s/\\r//g" ${report} > \$new_report
+    awk 'BEGIN{FS=OFS="\\t"}
+    {
+        gsub(/\\r/, "")
+        sub(/[ \\t]+\$/, "")
+        print
+    }' "${report}" > "\$new_report"
 
     krakenuniq_filter.py \\
         --krakenuniq_report \$new_report \\
@@ -36,36 +38,82 @@ process KRAKEN_FILTERING {
         --ratio ${params.ratio} \\
         --rank ${params.rank} \\
         ${only_ratio_flag} ${only_reads_flag}
+
+    mkdir -p formatted
+
+    mv *formatted.report.txt.filtered formatted/
     """
 }
 
-process KRAKEN_PLOT {
+process KRAKEN_ABUNDANCES {
 
-    tag "${meta.id}_k${param_set.uniq_kmer}_r${param_set.tax_reads}"
     label 'process_single'
 
-    conda "conda-forge::r-base=4.3.1"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/r-base:4.3.1' :
-        'biocontainers/r-base:4.3.1' }"
+    conda "${projectDir}/subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/filtering_environment.yml"
 
     input:
-    tuple val(meta), val(param_set), path(formatted_report)
+    val(meta)
+    tuple val(meta2), val(param_set), path(formatted_file)
 
     output:
-    tuple val(meta), val(param_set), path("formatted/*"), emit: formatted
-    tuple val(meta), val(param_set), path("abundance/*"), emit: abundance
-    tuple val(meta), val(param_set), path("plots/*"),     emit: plots
+    tuple val(meta), val(param_set), path("abundance/*.txt"), emit: abundance
 
     script:
     """
     set -euo pipefail
 
-    mkdir -p formatted abundance plots
+    mkdir -p formatted abundance
 
-    cp -f -- ${formatted_report} formatted/
+    cp ${formatted_file} formatted
 
-    krakenuniq_abundances.R formatted abundance
-    plot_abundances.R abundance plots
+    krakenuniq_abundances.R \\
+    formatted \\
+    abundance \\
+    ${meta.id} \\
+    ${param_set.uniq_kmer} \\
+    ${param_set.tax_reads}
+    """
+}
+
+process KRAKEN_PLOT {
+
+    label 'process_single'
+
+    conda "${projectDir}/subworkflows/local/utils_nfcore_seda_dna_processing_pipeline/filtering_environment.yml"
+
+    input:
+    tuple val(meta), val(param_set), path(abundance_file)
+    path(tax_file)
+    path(metadata)
+
+    output:
+    tuple val(meta), val(param_set), val("taxonomy"), path("plots/*"), emit: plots
+    tuple val(meta), val(param_set), path("diversity/*"), emit: diversity
+
+
+    script:
+    """
+    set -euo pipefail
+
+    mkdir -p abundance plots diversity
+    cp ${abundance_file} abundance
+
+    taxonomy_profiles.R \\
+    abundance \\
+    plots \\
+    ${tax_file} \\
+    ${meta.id} \\
+    ${metadata} \\
+    ${param_set.uniq_kmer} \\
+    ${param_set.tax_reads}
+
+    beta_diversity.R \\
+    abundance \\
+    diversity \\
+    ${tax_file} \\
+    ${meta.id} \\
+    ${metadata} \\
+    ${param_set.uniq_kmer} \\
+    ${param_set.tax_reads} 
     """
 }

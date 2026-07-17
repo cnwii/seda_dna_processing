@@ -12,17 +12,20 @@ process DAMAGE_BAYES {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path('*.fastq'), emit: reads
-    tuple val(meta), path('*.csv'), emit: damage_counts
-    tuple val(meta), path('*.pdf'), emit: plot_damage
+    tuple val(meta), path('base_frequency/*_end_freq'), emit: reads
+    tuple val(meta), path('plot_damage/*.csv'), emit: damage_counts
+    tuple val(meta), path('plot_damage/*.pdf'), emit: plot_damage
 
     script:
     """
     set -euo pipefail
 
-    awk -v n_bp=${params.n_bp} -v trim=${params.trim} \
-    -v out5="${reads.simpleName}_5_end_freq" \
-    -v out3="${reads.simpleName}_3_end_freq" '
+    mkdir -p base_frequency plot_damage
+
+
+    zcat "${reads}" | awk -v n_bp=${params.n_bp} -v trim=${params.trim} \
+    -v out5="base_frequency/${reads.simpleName}_5_end_freq" \
+    -v out3="base_frequency/${reads.simpleName}_3_end_freq" '
     BEGIN {
       print "Position_from_5end\\tA_freq\\tT_freq\\tC_freq\\tG_freq\\tTotal" > out5
       print "Position_from_3end\\tA_freq\\tT_freq\\tC_freq\\tG_freq\\tTotal" > out3
@@ -50,10 +53,8 @@ process DAMAGE_BAYES {
         printf "%d\\t%d\\t%d\\t%d\\t%d\\t%d\\n", i, count3[i,"A"]+0, count3[i,"T"]+0, count3[i,"C"]+0, count3[i,"G"]+0, total3[i]+0 >> out3
       }
     }
-    ' "${reads}"
-
-    mkdir -p base_frequency plot_damage
-    mv *fastq.gz base_frequency
+    '
+    
     damage_bayes.py base_frequency/ plot_damage/
     """
 }
