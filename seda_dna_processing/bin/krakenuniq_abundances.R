@@ -13,10 +13,15 @@ input_dir<-as.character(args[1])
 
 output_dir<-as.character(args[2])
 
+meta_id       <- args[3]
+
+k_value       <- args[4]
+r_value       <- args[5]
+
 
 #Reading and merging krakenuniq outputs from multiple samples
 
-krakenuniq_outputs<-list.files(path=input_dir, pattern = "\\.txt$")
+krakenuniq_outputs<-list.files(path=input_dir, pattern = "krakenuniq.*\\.txt\\.filtered$")
 
 df<-list()
 
@@ -30,8 +35,16 @@ if(dim(df[[i]])[1]!=0)
 
 {
 
-df[[i]]$SAMPLE<-krakenuniq_outputs[i]
-
+  filename <- krakenuniq_outputs[i]
+  
+  # Sample ID
+  df[[i]]$SAMPLE <- sub("_[^_]+$", "", sub("\\..*", "", filename))  
+  # Parameter set
+  df[[i]]$PARAM <- sub(
+    ".*krakenuniq\\.(k[0-9]+_r[0-9]+)\\.formatted\\.report\\.txt$",
+    "\\1",
+    filename
+  )
 #df[[i]]<-na.omit(df[[i]])
 
 }
@@ -100,11 +113,29 @@ abundance_matrix<-abundance_matrix[order(rownames(abundance_matrix)),]
 
 print(head(abundance_matrix))
 
+params <- unique(merged$PARAM)
 
-system(paste0("mkdir ",output_dir))
-
-write.table(abundance_matrix,file=paste0(output_dir,"/krakenuniq_abundance_matrix.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
-
-write.table(unique_taxids,file=paste0(output_dir,"/unique_species_taxid_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+for (p in params) {
+  
+  merged_sub <- subset(merged, PARAM == p)
+  
+  abundance_matrix <- xtabs(
+    taxReads ~ taxID + SAMPLE,
+    data = merged_sub
+  )
+  
+  write.table(
+    abundance_matrix,
+    file = paste0(output_dir,
+                  "/krakenuniq_abundance_matrix_",
+                  p,
+                  ".txt"),
+    quote = FALSE,
+    sep = "\t"
+  )
+}
+write.table(unique_taxids,file=paste0(output_dir,"/unique_species_taxid_list_",
+                  p,
+                  ".txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
 
 # write.table(unique_species,file=paste0(output_dir,"/unique_species_names_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")

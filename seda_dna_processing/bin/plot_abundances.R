@@ -12,7 +12,6 @@ in_dir<-as.character(args[1])
 
 out_dir<-as.character(args[2])
 
-install.packages("pheatmap")
 library("pheatmap")
 
 ku_abundance<-read.delim(paste0(in_dir,"/krakenuniq_abundance_matrix.txt"),header=TRUE,row.names=1,check.names=FALSE,sep="\t")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 from glob import glob
 import pandas as pd
@@ -7,13 +7,28 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import pymc as pm
 import arviz as az
+import sys
 
 
 input_dir = sys.argv[1]
 output_dir = sys.argv[2]
 
-output_pdf = os.path.join(output_dir, "damagebayes_with_smiley_plots.pdf")
-output_csv = os.path.join(output_dir, "global-damage-results.csv")
+files_5 = sorted(glob(os.path.join(input_dir, "*_5_end_freq")))
+files_3 = sorted(glob(os.path.join(input_dir, "*_3_end_freq")))
+
+paired_samples = []
+
+for f5 in files_5:
+    sample = os.path.basename(f5).replace("_5_end_freq", "")
+    f3 = os.path.join(input_dir, sample + "_3_end_freq")
+
+    if f3 in files_3:
+        paired_samples.append((sample, f5, f3))
+    else:
+        print(f"Warning: no matching 3′ file found for {sample}")
+
+output_pdf = os.path.join(output_dir, f"{sample}_damagebayes_with_smiley_plots.pdf")
+output_csv = os.path.join(output_dir, f"{sample}_global_damage_results.csv")
 
 
 def run_damage_model(positions, success_counts, fail_counts):
@@ -66,22 +81,6 @@ def run_damage_model(positions, success_counts, fail_counts):
         hdi_upper.append(hdi[1])
 
     return pos_range, mean_p, hdi_lower, hdi_upper, alpha_mean, beta_mean
-
-
-files_5 = sorted(glob(os.path.join(input_dir, "*_5_end_freq")))
-files_3 = sorted(glob(os.path.join(input_dir, "*_3_end_freq")))
-
-paired_samples = []
-
-for f5 in files_5:
-    sample = os.path.basename(f5).replace("_5_end_freq", "")
-    f3 = os.path.join(input_dir, sample + "_3_end_freq")
-
-    if f3 in files_3:
-        paired_samples.append((sample, f5, f3))
-    else:
-        print(f"Warning: no matching 3′ file found for {sample}")
-
 
 results = []
 
