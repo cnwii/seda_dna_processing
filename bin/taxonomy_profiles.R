@@ -31,32 +31,24 @@ otu_file <- list.files(
   pattern=file_pattern,
   full.names = TRUE)
 
-otu_df <- read.delim(
-  otu_file,
-  header = TRUE,
-  row.names = 1,
-  check.names = FALSE
-)
+sample_names <- scan( otu_file, what = character(), nlines = 1, quiet = TRUE )
+
+otu_df <- data.table::fread( otu_file, skip = 1, header = FALSE, col.names = c("taxid", sample_names), colClasses = list(character = 1) )
+
+rownames(otu_df) <- otu_df$taxid
+print(otu_df)
+otu_df <- read.table( otu_file, header = TRUE, row.names = 1, sep = "",check.names = FALSE, comment.char = "", quote = "" )
 
 otu_mat <- as.matrix(otu_df)
 
 otu_ps <- otu_table(otu_mat, taxa_are_rows = TRUE)
 
-tax_table_df <- read.delim(
-  tax_file,
-  header = TRUE,
-  row.names = 1,
-  check.names = FALSE,
-  quote = ""
-)
+tax_table_df <- data.table::fread(tax_file, header=T)
+print(tax_table_df)
 
-metadata <- read.delim(
-    metadata_file,
-    header = TRUE,
-    row.names = 1,
-    check.names = FALSE
-)
+metadata <- data.table::fread(metadata_file, header=T)
 
+print(metadata)
 metadata <- sample_data(metadata)
 
 otu_ids <- rownames(otu_mat)
@@ -65,11 +57,14 @@ tax_table_df <- tax_table_df[rownames(tax_table_df) %in% otu_ids, ]
 tax_table_df <- tax_table_df[match(otu_ids, rownames(tax_table_df)), ]
 
 common_ids <- intersect(otu_ids, rownames(tax_table_df))
+print(common_ids)
 
 otu_ps2 <- prune_taxa(common_ids, otu_ps)
 tax_table_df2 <- tax_table_df[common_ids, ]
+print(tax_table_df2)
 
 tax_ps <- tax_table(as.matrix(tax_table_df2))
+print(tax_ps)
 
 ps <- phyloseq(otu_ps2, tax_ps, metadata)
 
